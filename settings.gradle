@@ -1,0 +1,3 @@
+rootProject.name = "SmH-Dec-Library"
+include ':app'
+include ':SmHDevLibrary'
