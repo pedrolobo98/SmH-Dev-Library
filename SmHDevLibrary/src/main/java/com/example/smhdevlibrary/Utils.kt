@@ -19,7 +19,7 @@ class Utils {
 
     var lastActivity = "com.example.smh_demo.MainActivity"
 
-    val modeSelectionKey = "modeSelectionKey"
+    val modeSelectionKey = 0
     val homeActivityKey = "homeActivityKey"
     val pictureOutKey = "pictureOutKey"
     val listOutKey = "listOutKey"
