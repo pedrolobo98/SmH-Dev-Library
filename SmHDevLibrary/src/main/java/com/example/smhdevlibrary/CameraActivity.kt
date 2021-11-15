@@ -182,7 +182,7 @@ class CameraActivity : AppCompatActivity() {
             if ((intent.extras?.getInt(Utils().modeSelectionKey) != null) || (intent.extras?.getInt(Utils().modeSelectionKey) != 0)
                 || (intent.extras?.getString(Utils().homeActivityKey) != null)){
                 intent.extras?.getString(Utils().homeActivityKey, Utils().lastActivity)
-                intent.extras?.getInt(Utils().modeSelectionKey, mode)
+                mode = intent.extras?.getInt(Utils().modeSelectionKey)!!
                 bindCameraUseCases()
             }
         }
@@ -197,7 +197,7 @@ class CameraActivity : AppCompatActivity() {
             if ((intent.extras?.getInt(Utils().modeSelectionKey) != null) || (intent.extras?.getInt(Utils().modeSelectionKey) != 0)
                 || (intent.extras?.getString(Utils().homeActivityKey) != null)){
                 intent.extras?.getString(Utils().homeActivityKey, Utils().lastActivity)
-                intent.extras?.getInt(Utils().modeSelectionKey, mode)
+                mode = intent.extras?.getInt(Utils().modeSelectionKey)!!
                 bindCameraUseCases()
             }
         } else {
