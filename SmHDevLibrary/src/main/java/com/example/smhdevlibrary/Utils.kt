@@ -1,5 +1,6 @@
 package com.example.smhdevlibrary
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 
@@ -15,4 +16,6 @@ class Utils {
 
     data class returns (var unidade:List<unit>, var image: Bitmap)
     data class output (var resultado: List<Float>, var image: Bitmap)
+
+    val lastActivity = "com.example.smh_demo.MainActivity"
 }
