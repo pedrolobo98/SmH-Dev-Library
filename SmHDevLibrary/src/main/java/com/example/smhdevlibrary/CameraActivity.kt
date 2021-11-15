@@ -194,8 +194,10 @@ class CameraActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == permissionsRequestCode && hasPermissions(this)) {
-            if ((intent.extras?.getInt("mode") != null) || (intent.extras?.getInt("mode") != 0)){
-                mode = intent.extras?.getInt("mode")!!
+            if ((intent.extras?.getInt(Utils().modeSelectionKey) != null) || (intent.extras?.getInt(Utils().modeSelectionKey) != 0)
+                || (intent.extras?.getString(Utils().homeActivityKey) != null)){
+                intent.extras?.getString(Utils().homeActivityKey, Utils().lastActivity)
+                intent.extras?.getInt(Utils().modeSelectionKey, mode)
                 bindCameraUseCases()
             }
         } else {
