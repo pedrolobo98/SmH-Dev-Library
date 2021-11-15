@@ -127,34 +127,34 @@ class CameraActivity : AppCompatActivity() {
             //text_prediction.visibility = View.VISIBLE
             if (detectedList[0] == 1f && 3 < detectedList[5] && detectedList[5] < 200){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra("list", detectedList.toFloatArray())
-                intent.putExtra("picture", byteArray)
+                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                intent.putExtra(Utils().pictureOutKey, byteArray)
                 finish()
                 startActivity(intent)
             }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
                 && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra("list", detectedList.toFloatArray())
-                intent.putExtra("picture", byteArray)
+                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                intent.putExtra(Utils().pictureOutKey, byteArray)
                 finish()
                 startActivity(intent)
             }else if(detectedList[0] == 3f && 70f < detectedList[4] && detectedList[4] < 101f
                 && 20f < detectedList[3] && detectedList[3] < 200f){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra("list", detectedList.toFloatArray())
-                intent.putExtra("picture", byteArray)
+                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                intent.putExtra(Utils().pictureOutKey, byteArray)
                 finish()
                 startActivity(intent)
             }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra("list", detectedList.toFloatArray())
-                intent.putExtra("picture", byteArray)
+                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                intent.putExtra(Utils().pictureOutKey, byteArray)
                 finish()
                 startActivity(intent)
             }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra("list", detectedList.toFloatArray())
-                intent.putExtra("picture", byteArray)
+                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                intent.putExtra(Utils().pictureOutKey, byteArray)
                 finish()
                 startActivity(intent)
             }else{
@@ -179,8 +179,10 @@ class CameraActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(
                 this, permissions.toTypedArray(), permissionsRequestCode)
         } else {
-            if ((intent.extras?.getInt("mode") != null) || (intent.extras?.getInt("mode") != 0)){
-                mode = intent.extras?.getInt("mode")!!
+            if ((intent.extras?.getInt(Utils().modeSelectionKey) != null) || (intent.extras?.getInt(Utils().modeSelectionKey) != 0)
+                || (intent.extras?.getString(Utils().homeActivityKey) != null)){
+                intent.extras?.getString(Utils().homeActivityKey, Utils().lastActivity)
+                intent.extras?.getInt(Utils().modeSelectionKey, mode)
                 bindCameraUseCases()
             }
         }

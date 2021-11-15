@@ -17,5 +17,11 @@ class Utils {
     data class returns (var unidade:List<unit>, var image: Bitmap)
     data class output (var resultado: List<Float>, var image: Bitmap)
 
-    val lastActivity = "com.example.smh_demo.MainActivity"
+    var lastActivity = "com.example.smh_demo.MainActivity"
+
+    val modeSelectionKey = "modeSelectionKey"
+    val homeActivityKey = "homeActivityKey"
+    val pictureOutKey = "pictureOutKey"
+    val listOutKey = "listOutKey"
+
 }
