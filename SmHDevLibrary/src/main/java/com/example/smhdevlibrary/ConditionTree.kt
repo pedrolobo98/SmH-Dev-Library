@@ -141,23 +141,61 @@ class ConditionTree (bitmap: Bitmap, context: Context){
                 ySelector = { it.cluster.toDouble() })
             if (clusters.size == 2){
                 var yMed = 0
-                var valFlag = 0
-
-                clusters.forEachIndexed { index, item ->
-                    var Item = item.points
-                    if (index == 0){
-                        yMed = Item.sumBy { it -> it.ycent }
-                        Item = Item.sortedBy { it -> it.xcent }
-                        valFlag = (Item.joinToString (separator = "") { it -> "${it.classId}" }).toInt()
-
-                    }else if(index == 1){
-                        Item = Item.sortedBy { it -> it.xcent }
-                        var finalValue = (Item.joinToString (separator = "") { it -> "${it.classId}" }).toInt()
-                        if (Item.sumBy { it -> it.ycent } > yMed){
-                            analysisList = mutableListOf(2f, finalValue.toFloat(), valFlag.toFloat(), 0f, 0f, 0f)
-                        }else{
-                            analysisList = mutableListOf(2f, valFlag.toFloat(), finalValue.toFloat(), 0f, 0f, 0f)
+                if (clusters[1].points.sumBy { it -> it.ycent} > clusters[0].points.sumBy { it -> it.ycent}){
+                    if ((clusters[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt() > 1000){
+                        val clr = clusters[0].points.dbScanCluster(25.0,
+                            1,
+                            xSelector = { it.ycent.toDouble() },
+                            ySelector = { it.cluster.toDouble() })
+                        if (clr.size == 2){
+                            if (abs(clr[0].points.sumBy { it -> it.xcent} - clusters[1].points.sumBy { it -> it.ycent}) >
+                                abs(clr[1].points.sumBy { it -> it.xcent} - clusters[1].points.sumBy { it -> it.ycent})){
+                                analysisList = mutableListOf(2f
+                                    , (clusters[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , 0f, 0f)
+                            }else{
+                                analysisList = mutableListOf(2f
+                                    , (clusters[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , 0f, 0f)
+                            }
                         }
+                    }else{
+                        analysisList = mutableListOf(2f
+                            , (clusters[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                            , (clusters[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                            , 0f, 0f, 0f)
+                    }
+                }else{
+                    if ((clusters[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt() > 1000){
+                        val clr = clusters[1].points.dbScanCluster(25.0,
+                            1,
+                            xSelector = { it.ycent.toDouble() },
+                            ySelector = { it.cluster.toDouble() })
+                        if (clr.size == 2){
+                            if (abs(clr[0].points.sumBy { it -> it.xcent} - clusters[0].points.sumBy { it -> it.ycent}) >
+                                abs(clr[1].points.sumBy { it -> it.xcent} - clusters[0].points.sumBy { it -> it.ycent})){
+                                analysisList = mutableListOf(2f
+                                    , (clusters[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , 0f, 0f)
+                            }else{
+                                analysisList = mutableListOf(2f
+                                    , (clusters[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , (clr[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                                    , 0f, 0f)
+                            }
+                        }
+                    }else{
+                        analysisList = mutableListOf(2f
+                            , (clusters[0].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                            , (clusters[1].points.sortedBy { it -> it.xcent }.joinToString (separator = "") { it -> "${it.classId}" }).toInt().toFloat()
+                            , 0f, 0f, 0f)
                     }
                 }
             }else if (clusters.size == 3){
