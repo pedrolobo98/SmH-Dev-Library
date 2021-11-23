@@ -41,7 +41,7 @@ class ObjectDetectionHelper(context: Context) {
             .build()
         val detector = ObjectDetector.createFromFileAndOptions(
             context,
-            "ssd_640_2d_ecra_metadata.tflite",
+            "ssd_640_1d_metadata.tflite",
             options
         )
 
@@ -58,61 +58,43 @@ class ObjectDetectionHelper(context: Context) {
             DetectionResult(it.boundingBox, category.label)
         }
         // Draw the detection result on the bitmap and show it.
-
-        if (resultToDisplay.any { item -> item.text == "0\r" } && resultToDisplay.any { item -> item.text == "1\r" }){
-            var screenArea = resultToDisplay.filter { it.text == "0\r"}
-            if (screenArea.size == 1 && ((bitmap.width * bitmap.height)/10 <
-                        (screenArea[0].boundingBox.right.toInt() - screenArea[0].boundingBox.left.toInt()) *
-                        (screenArea[0].boundingBox.bottom.toInt() - screenArea[0].boundingBox.top.toInt()))){
-                resultToDisplay = resultToDisplay.filter { it.text == "1\r"}
-                var conditionTree = ConditionTree(bitmap, context)
-                var BuildList = buildList(bitmap, resultToDisplay)
-                var FilteresArea = conditionTree.filterByArea(BuildList)
-                var (resizeBoundinBox, image) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
-                if (resizeBoundinBox.size != 0){
-                    when(mode) {
-                        1 -> return Utils.output(
-                            conditionTree.autoDeviceDetection(resizeBoundinBox),
-                            image
-                        )
-                        2 -> return Utils.output(
-                            conditionTree.termoDeviceDetection(resizeBoundinBox),
-                            image
-                        )
-                        3 -> return Utils.output(
-                            conditionTree.balanceDeviceDetection(
-                                resizeBoundinBox
-                            ), image
-                        )
-                        4 -> return Utils.output(
-                            conditionTree.glucoDeviceDetection(resizeBoundinBox),
-                            image
-                        )
-                        5 -> return Utils.output(
-                            conditionTree.tenseDeviceDetection(resizeBoundinBox),
-                            image
-                        )
-                        else -> return Utils.output(
-                            conditionTree.oxiDeviceDetection(
-                                resizeBoundinBox
-                            ), image
-                        )
-                    }
-                }else{
-                    return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), image)
-                }
-            }else{
-                val conf = Bitmap.Config.ARGB_8888 // see other conf types
-                val bmp = Bitmap.createBitmap(320, 320, conf)
-                return Utils.output(mutableListOf(8f, 0f, 0f, 0f, 0f, 0f), bmp)
+        var conditionTree = ConditionTree(bitmap, context)
+        var BuildList = buildList(bitmap, resultToDisplay)
+        var FilteresArea = conditionTree.filterByArea(BuildList)
+        var (resizeBoundinBox, img) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
+        if (resizeBoundinBox.size != 0){
+            when(mode) {
+                1 -> return Utils.output(
+                    conditionTree.autoDeviceDetection(resizeBoundinBox),
+                    img
+                )
+                2 -> return Utils.output(
+                    conditionTree.termoDeviceDetection(resizeBoundinBox),
+                    img
+                )
+                3 -> return Utils.output(
+                    conditionTree.balanceDeviceDetection(
+                        resizeBoundinBox
+                    ), img
+                )
+                4 -> return Utils.output(
+                    conditionTree.glucoDeviceDetection(resizeBoundinBox),
+                    img
+                )
+                5 -> return Utils.output(
+                    conditionTree.tenseDeviceDetection(resizeBoundinBox),
+                    img
+                )
+                else -> return Utils.output(
+                    conditionTree.oxiDeviceDetection(
+                        resizeBoundinBox
+                    ), img
+                )
             }
         }else{
-            val conf = Bitmap.Config.ARGB_8888 // see other conf types
-            val bmp = Bitmap.createBitmap(320, 320, conf)
-            return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), bmp)
+            return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), img)
         }
         //return conditionTree.autoDeviceDetection(resizeBoundinBox)
-
     }
 
     fun buildList(bitmap: Bitmap, detectionResults: List<DetectionResult>): List<Utils.unit> {

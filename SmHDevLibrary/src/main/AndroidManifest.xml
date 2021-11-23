@@ -3,7 +3,8 @@
     package="com.example.smhdevlibrary">
 
     <application>
-        <activity android:name=".CameraActivity"></activity>
+        <activity android:name=".CameraAssistentActivity"></activity>
+        <activity android:name=".CameraActivity" />
     </application>
 
 </manifest>
