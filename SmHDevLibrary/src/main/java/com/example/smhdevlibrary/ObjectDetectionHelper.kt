@@ -93,7 +93,9 @@ class ObjectDetectionHelper(context: Context) {
                 )
             }
         }else{
-            return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), img)
+            val conf = Bitmap.Config.ARGB_8888 // see other conf types
+            val bmp = Bitmap.createBitmap(320, 320, conf)
+            return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), bmp)
         }
         //return conditionTree.autoDeviceDetection(resizeBoundinBox)
     }
