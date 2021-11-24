@@ -50,6 +50,7 @@ class CameraActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
         finder = findViewById(R.id.view_Finder)
+        assist = findViewById(R.id.textPrediction)
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
