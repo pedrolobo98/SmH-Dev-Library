@@ -61,7 +61,7 @@ class ObjectDetectionAssistentHelper(context: Context) {
 
         if (resultToDisplay.any { item -> item.text == "0\r" } && resultToDisplay.any { item -> item.text == "1\r" }){
             var screenArea = resultToDisplay.filter { it.text == "0\r"}
-            if (screenArea.size == 1 && ((bitmap.width * bitmap.height)/10 <
+            if (screenArea.size == 1 && ((bitmap.width * bitmap.height)/15 <
                         (screenArea[0].boundingBox.right.toInt() - screenArea[0].boundingBox.left.toInt()) *
                         (screenArea[0].boundingBox.bottom.toInt() - screenArea[0].boundingBox.top.toInt()))){
                 resultToDisplay = resultToDisplay.filter { it.text == "1\r"}
