@@ -22,6 +22,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -48,6 +49,7 @@ class CameraAssistentActivity : AppCompatActivity() {
     private lateinit var saveButton: ImageButton
     private lateinit var printAnalysis: TextView
     private lateinit var showDetection: ImageView
+    private lateinit var cardViewDetection: CardView
 
     private var safeSave = false
 
@@ -59,6 +61,7 @@ class CameraAssistentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera_assistent)
 
+        cardViewDetection = findViewById(R.id.cardView)
         saveButton = findViewById(R.id.camera_capture_button)
         printAnalysis = findViewById(R.id.txtViewAnalysis)
         showDetection = findViewById(R.id.detectionsScree)
@@ -144,6 +147,7 @@ class CameraAssistentActivity : AppCompatActivity() {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         showDetection.setImageBitmap(bitmap)
         if (detectedList[0] != 0f &&  detectedList[0] != 9f &&  detectedList[0] != 8f){
+            assist.visibility = View.INVISIBLE
             if (detectedList[0] == 1f){
                 if (3 < detectedList[5] && detectedList[5] < 200){
                     safeSave = true
@@ -192,6 +196,7 @@ class CameraAssistentActivity : AppCompatActivity() {
             }else{
                 saveButton.visibility = View.INVISIBLE
                 assist.text = "Invalid Analysis "
+                assist.visibility = View.VISIBLE
                 safeSave = false
             }
         }else if(detectedList[0] == 9f){
@@ -205,6 +210,7 @@ class CameraAssistentActivity : AppCompatActivity() {
             assist.visibility = View.VISIBLE
             safeSave = false
         }else{
+            cardViewDetection.visibility = View.INVISIBLE
             saveButton.visibility = View.INVISIBLE
             assist.visibility = View.GONE
             safeSave = false
