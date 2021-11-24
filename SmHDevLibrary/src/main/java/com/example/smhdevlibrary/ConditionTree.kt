@@ -600,11 +600,11 @@ class ConditionTree (bitmap: Bitmap, context: Context){
                         Item.forEachIndexed{index, item -> yMed1 = yMed1 + item.ycent}
                         yMed1 = yMed1 / Item.size
                         var finalValue = (Item.joinToString (separator = "") { it -> "${it.classId}" }).toInt()
-                        if (yMed0 < yMed1 && valFlag > 110){
+                        if (yMed0 < yMed1 && valFlag > 100){
                             analysisList = mutableListOf(2f, 0f, 0f, 0f, 0f, 0f)
                             analysisList[1] = valFlag.toFloat()
                             analysisList[2] = finalValue.toFloat()
-                        }else if (yMed1 < yMed0 && finalValue > 110){
+                        }else if (yMed1 < yMed0 && finalValue > 100){
                             analysisList = mutableListOf(2f, 0f, 0f, 0f, 0f, 0f)
                             analysisList[2] = valFlag.toFloat()
                             analysisList[1] = finalValue.toFloat()
