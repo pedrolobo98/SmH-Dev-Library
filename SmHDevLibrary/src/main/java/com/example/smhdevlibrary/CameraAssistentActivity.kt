@@ -148,6 +148,7 @@ class CameraAssistentActivity : AppCompatActivity() {
         showDetection.setImageBitmap(bitmap)
         cardViewDetection.visibility = View.VISIBLE
         printAnalysis.setText("")
+        printAnalysis.bringToFront()
         if (detectedList[0] != 0f &&  detectedList[0] != 9f &&  detectedList[0] != 8f){
             assist.visibility = View.INVISIBLE
             if (detectedList[0] == 1f){
@@ -197,17 +198,20 @@ class CameraAssistentActivity : AppCompatActivity() {
                 resultList = detectedList
             }else{
                 saveButton.visibility = View.INVISIBLE
+                cardViewDetection.visibility = View.INVISIBLE
                 assist.text = "Invalid Analysis "
                 assist.visibility = View.VISIBLE
                 safeSave = false
             }
         }else if(detectedList[0] == 9f){
             saveButton.visibility = View.INVISIBLE
+            cardViewDetection.visibility = View.INVISIBLE
             assist.text = "Wrong Device Selected"
             assist.visibility = View.VISIBLE
             safeSave = false
         }else if(detectedList[0] == 8f){
             saveButton.visibility = View.INVISIBLE
+            cardViewDetection.visibility = View.INVISIBLE
             assist.text = "Bring the device closer"
             assist.visibility = View.VISIBLE
             safeSave = false
