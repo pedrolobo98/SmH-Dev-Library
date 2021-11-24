@@ -41,7 +41,7 @@ class ObjectDetectionHelper(context: Context) {
             .build()
         val detector = ObjectDetector.createFromFileAndOptions(
             context,
-            "ssd_640_1d_metadata.tflite",
+            "ssd_640_2d_ecra_metadata.tflite",
             options
         )
 
@@ -57,6 +57,7 @@ class ObjectDetectionHelper(context: Context) {
             // Create a data object to display the detection result
             DetectionResult(it.boundingBox, category.label)
         }
+        resultToDisplay = resultToDisplay.filter { it.text == "1\r"}
         // Draw the detection result on the bitmap and show it.
         var conditionTree = ConditionTree(bitmap, context)
         var BuildList = buildList(bitmap, resultToDisplay)

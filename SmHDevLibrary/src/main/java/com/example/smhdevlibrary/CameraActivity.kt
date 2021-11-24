@@ -49,13 +49,11 @@ class CameraActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_camera)
-
-        assist = findViewById(R.id.textPrediction)
         finder = findViewById(R.id.view_Finder)
     }
+
     @SuppressLint("UnsafeExperimentalUsageError")
     private fun bindCameraUseCases() = finder.post {
-
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener(Runnable{
 
@@ -117,7 +115,6 @@ class CameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-
     private fun reportPrediction (detectedList: List<Float>, bitmap: Bitmap) = finder.post {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -163,14 +160,12 @@ class CameraActivity : AppCompatActivity() {
         }else if(detectedList[0] == 9f){
             assist.text = "Wrong Device Selected"
             assist.visibility = View.VISIBLE
-        }else if(detectedList[0] == 8f){
-            assist.text = "Bring the Device Closer"
-            assist.visibility = View.VISIBLE
         }
         else{
             assist.visibility = View.GONE
         }
     }
+
     override fun onResume() {
         super.onResume()
 
@@ -187,11 +182,8 @@ class CameraActivity : AppCompatActivity() {
             }
         }
     }
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == permissionsRequestCode && hasPermissions(this)) {
             if ((intent.extras?.getInt(Utils().modeSelectionKey) != null) || (intent.extras?.getInt(Utils().modeSelectionKey) != 0)
@@ -206,10 +198,11 @@ class CameraActivity : AppCompatActivity() {
             Toast.makeText(this, "Enable camera permission from settings", Toast.LENGTH_SHORT).show()
         }
     }
-    /** Convenience method used to check if all permissions required by this app are granted */
+
     private fun hasPermissions(context: Context) = permissions.all {
         ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
     }
+
     override fun onBackPressed() {
         super.onBackPressed()
         val intent = Intent(this, Class.forName(Utils().lastActivity))
