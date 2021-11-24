@@ -146,6 +146,8 @@ class CameraAssistentActivity : AppCompatActivity() {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         showDetection.setImageBitmap(bitmap)
+        cardViewDetection.visibility = View.VISIBLE
+        printAnalysis.setText("")
         if (detectedList[0] != 0f &&  detectedList[0] != 9f &&  detectedList[0] != 8f){
             assist.visibility = View.INVISIBLE
             if (detectedList[0] == 1f){
