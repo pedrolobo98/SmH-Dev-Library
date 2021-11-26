@@ -507,7 +507,7 @@ class ConditionTree (bitmap: Bitmap, context: Context){
                 xSelector = { it.ycent.toDouble() },
                 ySelector = { it.cluster.toDouble() })
             if (clusters.size != 2){
-                val clusters = copyFilteredArea.dbScanCluster(25.0,
+                val clusters = copyFilteredArea.dbScanCluster(40.0,
                     1,
                     xSelector = { it.xcent.toDouble() },
                     ySelector = { it.cluster.toDouble() })
