@@ -1,6 +1,5 @@
 package com.example.smhdevlibrary
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 
@@ -22,6 +21,6 @@ class Utils {
     val modeSelectionKey = "modeSelectionKey"
     val homeActivityKey = "homeActivityKey"
     val pictureOutKey = "pictureOutKey"
+    val timerOutKey = "timerOutKey"
     val listOutKey = "listOutKey"
-
 }
