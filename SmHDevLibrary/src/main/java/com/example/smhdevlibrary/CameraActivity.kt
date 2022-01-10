@@ -35,6 +35,7 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var bitmapBuffer: Bitmap
     private var imageRotationDegrees: Int = 0
+    private var StartTime: Long = 0
     private var mode: Int = 0
 
     private val cameraExecutor = Executors.newSingleThreadExecutor()
@@ -44,8 +45,6 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var assist: TextView
     private lateinit var finder: PreviewView
 
-    private lateinit var view_timer: Chronometer
-
     private val detector by lazy { ObjectDetectionHelper(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,11 +53,8 @@ class CameraActivity : AppCompatActivity() {
         setContentView(R.layout.activity_camera)
         finder = findViewById(R.id.view_Finder)
         assist = findViewById(R.id.textPrediction)
-        view_timer = findViewById(R.id.timer)
 
-        //view_timer.isCountDown = true
-        view_timer.base = SystemClock.elapsedRealtime()
-        view_timer.start()
+        StartTime = System.currentTimeMillis()
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
@@ -132,11 +128,10 @@ class CameraActivity : AppCompatActivity() {
             //text_prediction.text = "Device Detected"
             //text_prediction.visibility = View.VISIBLE
             if (detectedList[0] == 1f && 3 < detectedList[5] && detectedList[5] < 200){
-                view_timer.getText()
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, SystemClock.elapsedRealtime())
+                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
             }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
@@ -144,7 +139,7 @@ class CameraActivity : AppCompatActivity() {
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, SystemClock.elapsedRealtime())
+                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
             }else if(detectedList[0] == 3f && 70f < detectedList[4] && detectedList[4] < 101f
@@ -152,21 +147,21 @@ class CameraActivity : AppCompatActivity() {
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, SystemClock.elapsedRealtime())
+                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
             }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, SystemClock.elapsedRealtime())
+                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
             }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, SystemClock.elapsedRealtime())
+                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
             }else{
