@@ -38,6 +38,7 @@ class CameraAssistentActivity : AppCompatActivity() {
     private lateinit var byteArray: ByteArray
     private lateinit var resultList: List<Float>
     private var imageRotationDegrees: Int = 0
+    private var StartTime: Long = 0
     private var mode: Int = 0
 
     private val cameraExecutor = Executors.newSingleThreadExecutor()
@@ -67,6 +68,8 @@ class CameraAssistentActivity : AppCompatActivity() {
         showDetection = findViewById(R.id.detectionsScree)
         assist = findViewById(R.id.textPrediction)
         finder = findViewById(R.id.view_Finder)
+
+        StartTime = System.currentTimeMillis()
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
@@ -137,6 +140,7 @@ class CameraAssistentActivity : AppCompatActivity() {
             val intent = Intent(this, Class.forName(Utils().lastActivity))
             intent.putExtra(Utils().listOutKey, resultList.toFloatArray())
             intent.putExtra(Utils().pictureOutKey, byteArray)
+            intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
             finish()
             startActivity(intent)
         }
