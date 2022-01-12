@@ -65,6 +65,8 @@ class CameraActivity : AppCompatActivity() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider = cameraProviderFuture.get()
 
+            var runAgain = true
+
             // Preview
             val preview = Preview.Builder()
                 .setTargetRotation(finder.display.rotation)
@@ -96,27 +98,84 @@ class CameraActivity : AppCompatActivity() {
                 converter.yuvToRgb(image.image!!, bitmapBuffer)
 
                 // Perform the object detection for the current frame
-                var (numDetections, imageRe) = detector.runObjectDetection(bitmapBuffer, imageRotationDegrees, mode)
-                reportPrediction(numDetections, imageRe)
+                var (detectedList, imageRe) = detector.runObjectDetection(bitmapBuffer, imageRotationDegrees, mode)
+                val stream = ByteArrayOutputStream()
+                imageRe.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                val byteArray: ByteArray = stream.toByteArray()
+                if (detectedList[0] != 0f &&  detectedList[0] != 9f &&  detectedList[0] != 8f){
+                    //text_prediction.text = "Device Detected"
+                    //text_prediction.visibility = View.VISIBLE
+                    if (detectedList[0] == 1f && 3 < detectedList[5] && detectedList[5] < 200){
+                        val intent = Intent(this, Class.forName(Utils().lastActivity))
+                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                        intent.putExtra(Utils().pictureOutKey, byteArray)
+                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
+                        finish()
+                        startActivity(intent)
+                        runAgain = false
+                    }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
+                        && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
+                        val intent = Intent(this, Class.forName(Utils().lastActivity))
+                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                        intent.putExtra(Utils().pictureOutKey, byteArray)
+                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
+                        finish()
+                        startActivity(intent)
+                        runAgain = false
+                    }else if(detectedList[0] == 3f && 70f < detectedList[4] && detectedList[4] < 101f
+                        && 20f < detectedList[3] && detectedList[3] < 200f){
+                        val intent = Intent(this, Class.forName(Utils().lastActivity))
+                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                        intent.putExtra(Utils().pictureOutKey, byteArray)
+                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
+                        finish()
+                        startActivity(intent)
+                        runAgain = false
+                    }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
+                        val intent = Intent(this, Class.forName(Utils().lastActivity))
+                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
+                        intent.putExtra(Utils().pictureOutKey, byteArray)
+                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
+                        finish()
+                        startActivity(intent)
+                        runAgain = false
+                    }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
+
+                        runAgain = false
+                    }else{
+                        assist.visibility = View.GONE
+                    }
+                }else if(detectedList[0] == 8f){
+                    assist.text = "Bring the device closer"
+                    assist.visibility = View.VISIBLE
+                }else if(detectedList[0] == 9f){
+                    assist.text = "Wrong Device Selected"
+                    assist.visibility = View.VISIBLE
+                }
+                else{
+                    assist.visibility = View.GONE
+                }
                 image.close()
             })
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            if (runAgain){
+                try {
+                    // Unbind use cases before rebinding
+                    cameraProvider.unbindAll()
 
-            try {
-                // Unbind use cases before rebinding
+                    // Bind use cases to camera
+                    cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, imageAnalysis, preview)
+                    preview?.setSurfaceProvider(finder.surfaceProvider)
+
+
+                } catch(exc: Exception) {
+                    Log.e("SmH", "Use case binding failed", exc)
+                }
+            }else{
                 cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, imageAnalysis, preview)
-                preview?.setSurfaceProvider(finder.surfaceProvider)
-
-
-            } catch(exc: Exception) {
-                Log.e("SmH", "Use case binding failed", exc)
             }
-
         }, ContextCompat.getMainExecutor(this))
     }
 
