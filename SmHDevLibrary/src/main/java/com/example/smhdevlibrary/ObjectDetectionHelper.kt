@@ -63,39 +63,45 @@ class ObjectDetectionHelper(context: Context) {
         var BuildList = buildList(bitmap, resultToDisplay)
         var FilteresArea = conditionTree.filterByArea(BuildList)
         var (resizeBoundinBox, img, area) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
-        if (resizeBoundinBox.size != 0){
-            when(mode) {
-                1 -> return Utils.output(
-                    conditionTree.autoDeviceDetection(resizeBoundinBox),
-                    img
-                )
-                2 -> return Utils.output(
-                    conditionTree.termoDeviceDetection(resizeBoundinBox),
-                    img
-                )
-                3 -> return Utils.output(
-                    conditionTree.balanceDeviceDetection(
-                        resizeBoundinBox
-                    ), img
-                )
-                4 -> return Utils.output(
-                    conditionTree.glucoDeviceDetection(resizeBoundinBox),
-                    img
-                )
-                5 -> return Utils.output(
-                    conditionTree.tenseDeviceDetection(resizeBoundinBox),
-                    img
-                )
-                else -> return Utils.output(
-                    conditionTree.oxiDeviceDetection(
-                        resizeBoundinBox
-                    ), img
-                )
+        if(area > (bitmap.height * bitmap.width)/5){
+            if (resizeBoundinBox.size != 0){
+                when(mode) {
+                    1 -> return Utils.output(
+                        conditionTree.autoDeviceDetection(resizeBoundinBox),
+                        img
+                    )
+                    2 -> return Utils.output(
+                        conditionTree.termoDeviceDetection(resizeBoundinBox),
+                        img
+                    )
+                    3 -> return Utils.output(
+                        conditionTree.balanceDeviceDetection(
+                            resizeBoundinBox
+                        ), img
+                    )
+                    4 -> return Utils.output(
+                        conditionTree.glucoDeviceDetection(resizeBoundinBox),
+                        img
+                    )
+                    5 -> return Utils.output(
+                        conditionTree.tenseDeviceDetection(resizeBoundinBox),
+                        img
+                    )
+                    else -> return Utils.output(
+                        conditionTree.oxiDeviceDetection(
+                            resizeBoundinBox
+                        ), img
+                    )
+                }
+            }else{
+                val conf = Bitmap.Config.ARGB_8888 // see other conf types
+                val bmp = Bitmap.createBitmap(320, 320, conf)
+                return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), bmp)
             }
         }else{
             val conf = Bitmap.Config.ARGB_8888 // see other conf types
             val bmp = Bitmap.createBitmap(320, 320, conf)
-            return Utils.output(mutableListOf(0f, 0f, 0f, 0f, 0f, 0f), bmp)
+            return Utils.output(mutableListOf(8f, 0f, 0f, 0f, 0f, 0f), bmp)
         }
         //return conditionTree.autoDeviceDetection(resizeBoundinBox)
     }
