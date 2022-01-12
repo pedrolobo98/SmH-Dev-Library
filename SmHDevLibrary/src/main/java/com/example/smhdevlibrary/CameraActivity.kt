@@ -159,7 +159,7 @@ class CameraActivity : AppCompatActivity() {
                 finish()
                 startActivity(intent)
                 runingCam = false
-            }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
+            }else if(detectedList[0] == 4f && (300 < detectedList[1] && detectedList[1] < 450)){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
@@ -167,7 +167,7 @@ class CameraActivity : AppCompatActivity() {
                 finish()
                 startActivity(intent)
                 runingCam = false
-            }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
+            }else if (detectedList[0] == 5f && 200 < detectedList[1] && detectedList[1] < 1800){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
                 intent.putExtra(Utils().pictureOutKey, byteArray)
