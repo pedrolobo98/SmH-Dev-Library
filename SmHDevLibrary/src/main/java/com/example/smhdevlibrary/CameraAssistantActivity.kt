@@ -156,7 +156,7 @@ class CameraAssistantActivity : AppCompatActivity() {
                     safeSave = true
                     saveButton.visibility = View.VISIBLE
                 }
-                printAnalysis.setText("Glucometer:\n" + detectedList[5].toString())
+                printAnalysis.setText("Glucometer:\n" + (detectedList[1].toFloat()/10).toString())
                 byteArray  = stream.toByteArray()
                 resultList = detectedList
             }else if (detectedList[0] == 2f){
@@ -185,7 +185,7 @@ class CameraAssistantActivity : AppCompatActivity() {
                     safeSave = true
                     saveButton.visibility = View.VISIBLE
                 }
-                printAnalysis.setText("Termometer:\n" + detectedList[1].toString() + "\nCº:" )
+                printAnalysis.setText("Termometer:\n" + (detectedList[1].toFloat()/10).toString() + "\nCº:" )
                 byteArray  = stream.toByteArray()
                 resultList = detectedList
             }else if (detectedList[0] == 5f ){
