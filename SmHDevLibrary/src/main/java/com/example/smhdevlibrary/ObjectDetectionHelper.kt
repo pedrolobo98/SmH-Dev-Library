@@ -57,17 +57,20 @@ class ObjectDetectionHelper(context: Context) {
             // Create a data object to display the detection result
             DetectionResult(it.boundingBox, category.label)
         }
-        resultToDisplay = resultToDisplay.filter { it.text == "1\r"}
+
         // Draw the detection result on the bitmap and show it.
-        var conditionTree = ConditionTree(bitmap, context)
-        var BuildList = buildList(bitmap, resultToDisplay)
-        var FilteresArea = conditionTree.filterByArea(BuildList)
-        var (resizeBoundinBox, img, area) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
+
         if (resultToDisplay.any { item -> item.text == "0\r" } && resultToDisplay.any { item -> item.text == "1\r" }){
             var screenArea = resultToDisplay.filter { it.text == "0\r"}
             if (screenArea.size == 1 && ((bitmap.width * bitmap.height)/15 <
                         (screenArea[0].boundingBox.right.toInt() - screenArea[0].boundingBox.left.toInt()) *
                         (screenArea[0].boundingBox.bottom.toInt() - screenArea[0].boundingBox.top.toInt()))){
+
+                resultToDisplay = resultToDisplay.filter { it.text == "1\r"}
+                var conditionTree = ConditionTree(bitmap, context)
+                var BuildList = buildList(bitmap, resultToDisplay)
+                var FilteresArea = conditionTree.filterByArea(BuildList)
+                var (resizeBoundinBox, img, area) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
                 if (resizeBoundinBox.size != 0){
                     when(mode) {
                         1 -> return Utils.output(
