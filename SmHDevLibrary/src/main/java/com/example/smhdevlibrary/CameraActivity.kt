@@ -37,6 +37,7 @@ class CameraActivity : AppCompatActivity() {
     private var imageRotationDegrees: Int = 0
     private var StartTime: Long = 0
     private var mode: Int = 0
+    private var runingCam = true
 
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val permissions = listOf(Manifest.permission.CAMERA)
@@ -62,10 +63,10 @@ class CameraActivity : AppCompatActivity() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener(Runnable{
 
+            var runingCam = true
+
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider = cameraProviderFuture.get()
-
-            var runAgain = true
 
             // Preview
             val preview = Preview.Builder()
@@ -98,69 +99,15 @@ class CameraActivity : AppCompatActivity() {
                 converter.yuvToRgb(image.image!!, bitmapBuffer)
 
                 // Perform the object detection for the current frame
-                var (detectedList, imageRe) = detector.runObjectDetection(bitmapBuffer, imageRotationDegrees, mode)
-                val stream = ByteArrayOutputStream()
-                imageRe.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                val byteArray: ByteArray = stream.toByteArray()
-                if (detectedList[0] != 0f &&  detectedList[0] != 9f &&  detectedList[0] != 8f){
-                    //text_prediction.text = "Device Detected"
-                    //text_prediction.visibility = View.VISIBLE
-                    if (detectedList[0] == 1f && 3 < detectedList[5] && detectedList[5] < 200){
-                        val intent = Intent(this, Class.forName(Utils().lastActivity))
-                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                        intent.putExtra(Utils().pictureOutKey, byteArray)
-                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                        finish()
-                        startActivity(intent)
-                        runAgain = false
-                    }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
-                        && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
-                        val intent = Intent(this, Class.forName(Utils().lastActivity))
-                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                        intent.putExtra(Utils().pictureOutKey, byteArray)
-                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                        finish()
-                        startActivity(intent)
-                        runAgain = false
-                    }else if(detectedList[0] == 3f && 70f < detectedList[4] && detectedList[4] < 101f
-                        && 20f < detectedList[3] && detectedList[3] < 200f){
-                        val intent = Intent(this, Class.forName(Utils().lastActivity))
-                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                        intent.putExtra(Utils().pictureOutKey, byteArray)
-                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                        finish()
-                        startActivity(intent)
-                        runAgain = false
-                    }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
-                        val intent = Intent(this, Class.forName(Utils().lastActivity))
-                        intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                        intent.putExtra(Utils().pictureOutKey, byteArray)
-                        intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                        finish()
-                        startActivity(intent)
-                        runAgain = false
-                    }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
-
-                        runAgain = false
-                    }else{
-                        assist.visibility = View.GONE
-                    }
-                }else if(detectedList[0] == 8f){
-                    assist.text = "Bring the device closer"
-                    assist.visibility = View.VISIBLE
-                }else if(detectedList[0] == 9f){
-                    assist.text = "Wrong Device Selected"
-                    assist.visibility = View.VISIBLE
-                }
-                else{
-                    assist.visibility = View.GONE
-                }
+                var (numDetections, imageRe) = detector.runObjectDetection(bitmapBuffer, imageRotationDegrees, mode)
+                reportPrediction(numDetections, imageRe)
                 image.close()
             })
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-            if (runAgain){
+
+            if (runingCam){
                 try {
                     // Unbind use cases before rebinding
                     cameraProvider.unbindAll()
@@ -193,6 +140,7 @@ class CameraActivity : AppCompatActivity() {
                 intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
+                runingCam = false
             }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
                 && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
@@ -201,6 +149,7 @@ class CameraActivity : AppCompatActivity() {
                 intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
+                runingCam = false
             }else if(detectedList[0] == 3f && 70f < detectedList[4] && detectedList[4] < 101f
                 && 20f < detectedList[3] && detectedList[3] < 200f){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
@@ -209,6 +158,7 @@ class CameraActivity : AppCompatActivity() {
                 intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
+                runingCam = false
             }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
@@ -216,6 +166,7 @@ class CameraActivity : AppCompatActivity() {
                 intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
+                runingCam = false
             }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
@@ -223,6 +174,7 @@ class CameraActivity : AppCompatActivity() {
                 intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
                 finish()
                 startActivity(intent)
+                runingCam = false
             }else{
                 assist.visibility = View.GONE
             }
