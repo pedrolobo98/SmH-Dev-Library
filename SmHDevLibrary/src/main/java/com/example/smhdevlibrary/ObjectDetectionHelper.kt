@@ -62,7 +62,7 @@ class ObjectDetectionHelper(context: Context) {
         var conditionTree = ConditionTree(bitmap, context)
         var BuildList = buildList(bitmap, resultToDisplay)
         var FilteresArea = conditionTree.filterByArea(BuildList)
-        var (resizeBoundinBox, img) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
+        var (resizeBoundinBox, img, area) = conditionTree.resizeByBoundingBoxLimits(FilteresArea)
         if (resizeBoundinBox.size != 0){
             when(mode) {
                 1 -> return Utils.output(

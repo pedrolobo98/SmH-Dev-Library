@@ -55,7 +55,7 @@ class ObjectDetectionAssistantHelper(context: Context) {
             val text = "${category.label}, ${category.score.times(100).toInt()}%"
 
             // Create a data object to display the detection result
-            DetectionResultAssistent(it.boundingBox, category.label)
+            DetectionResultAssistant(it.boundingBox, category.label)
         }
         // Draw the detection result on the bitmap and show it.
 
@@ -115,7 +115,7 @@ class ObjectDetectionAssistantHelper(context: Context) {
 
     }
 
-    fun buildList(bitmap: Bitmap, detectionResults: List<DetectionResultAssistent>): List<Utils.unit> {
+    fun buildList(bitmap: Bitmap, detectionResults: List<DetectionResultAssistant>): List<Utils.unit> {
 
         var outputBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         val results = mutableListOf<Utils.unit>()

@@ -13,7 +13,7 @@ class Utils {
     data class unit(var area: Int, var xmin: Int, var ymin: Int, var w: Int, var h: Int,
                     var xcent: Int, var ycent: Int, var classId: Int, var cluster: Int)
 
-    data class returns (var unidade:List<unit>, var image: Bitmap)
+    data class returns (var unidade:List<unit>, var image: Bitmap, var area: Int )
     data class output (var resultado: List<Float>, var image: Bitmap)
 
     var lastActivity = "com.example.smh_demo.MainActivity"

@@ -80,7 +80,7 @@ class ConditionTree (bitmap: Bitmap, context: Context){
                         item.ymin.toFloat() + item.h.toFloat()), pen)
             }
         }
-        return Utils.returns(filteredArea, outputBitmap)
+        return Utils.returns(filteredArea, outputBitmap, (xmax - xmin) * (ymax - ymin))
     }
     fun termoDeviceDetection(filteredArea: List<Utils.unit>): List<Float> {
         var copyFilteredArea = filteredArea
