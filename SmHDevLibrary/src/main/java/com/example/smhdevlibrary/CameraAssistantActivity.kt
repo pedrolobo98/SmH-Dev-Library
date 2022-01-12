@@ -54,7 +54,7 @@ class CameraAssistantActivity : AppCompatActivity() {
     private var safeSave = false
 
     private val detector by lazy {
-        ObjectDetectionAssistentHelper(this)
+        ObjectDetectionAssistantHelper(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
