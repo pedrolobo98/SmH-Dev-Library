@@ -6,21 +6,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.SystemClock
 import android.util.Log
 import android.util.Size
 import android.view.View
-import android.widget.Chronometer
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
@@ -28,12 +29,13 @@ import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executors
 import kotlin.random.Random
 
-
-class CameraActivity : AppCompatActivity() {
+class CameraAssistantActivity : AppCompatActivity() {
 
     private var imageCapture: ImageCapture? = null
 
     private lateinit var bitmapBuffer: Bitmap
+    private lateinit var byteArray: ByteArray
+    private lateinit var resultList: List<Float>
     private var imageRotationDegrees: Int = 0
     private var StartTime: Long = 0
     private var mode: Int = 0
@@ -44,19 +46,30 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var assist: TextView
     private lateinit var finder: PreviewView
+    private lateinit var saveButton: ImageButton
+    private lateinit var printAnalysis: TextView
+    private lateinit var showDetection: ImageView
+    private lateinit var cardViewDetection: CardView
 
-    private val detector by lazy { ObjectDetectionHelper(this) }
+    private var safeSave = false
+
+    private val detector by lazy {
+        ObjectDetectionAssistentHelper(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_camera_assistant)
 
-        setContentView(R.layout.activity_camera)
-        finder = findViewById(R.id.view_Finder)
+        cardViewDetection = findViewById(R.id.cardView)
+        saveButton = findViewById(R.id.camera_capture_button)
+        printAnalysis = findViewById(R.id.txtViewAnalysis)
+        showDetection = findViewById(R.id.detectionsScree)
         assist = findViewById(R.id.textPrediction)
+        finder = findViewById(R.id.view_Finder)
 
         StartTime = System.currentTimeMillis()
     }
-
     @SuppressLint("UnsafeExperimentalUsageError")
     private fun bindCameraUseCases() = finder.post {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -120,62 +133,95 @@ class CameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    fun cameraCapture(view: View){
+        if (safeSave) {
+            val intent = Intent(this, Class.forName(Utils().lastActivity))
+            intent.putExtra(Utils().listOutKey, resultList.toFloatArray())
+            intent.putExtra(Utils().pictureOutKey, byteArray)
+            intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
+            finish()
+            startActivity(intent)
+        }
+    }
+
     private fun reportPrediction (detectedList: List<Float>, bitmap: Bitmap) = finder.post {
         val stream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        val byteArray: ByteArray = stream.toByteArray()
+        showDetection.setImageBitmap(bitmap)
+        cardViewDetection.visibility = View.VISIBLE
+        printAnalysis.setText("")
+        printAnalysis.bringToFront()
         if (detectedList[0] != 0f &&  detectedList[0] != 9f &&  detectedList[0] != 8f){
-            //text_prediction.text = "Device Detected"
-            //text_prediction.visibility = View.VISIBLE
-            if (detectedList[0] == 1f && 3 < detectedList[5] && detectedList[5] < 200){
-                val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                finish()
-                startActivity(intent)
-            }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
-                && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
-                val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                finish()
-                startActivity(intent)
-            }else if(detectedList[0] == 3f && 70f < detectedList[4] && detectedList[4] < 101f
-                && 20f < detectedList[3] && detectedList[3] < 200f){
-                val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                finish()
-                startActivity(intent)
-            }else if(detectedList[0] == 4f && (20 < detectedList[1] && detectedList[1] < 60)){
-                val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                finish()
-                startActivity(intent)
+            assist.visibility = View.INVISIBLE
+            if (detectedList[0] == 1f){
+                if (3 < detectedList[5] && detectedList[5] < 200){
+                    safeSave = true
+                    saveButton.visibility = View.VISIBLE
+                }
+                printAnalysis.setText("Glucometer:\n" + detectedList[5].toString())
+                byteArray  = stream.toByteArray()
+                resultList = detectedList
+            }else if (detectedList[0] == 2f){
+                if(100f < detectedList[1] && detectedList[1] < 200f
+                    && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
+                    safeSave = true
+                    saveButton.visibility = View.VISIBLE
+                }
+                printAnalysis.setText("Blood Pressure:" + "\nSys:" + detectedList[1].toString()
+                        + "\nDia:" + detectedList[2].toString()
+                        + "\nPul:" + detectedList[3].toString())
+                byteArray  = stream.toByteArray()
+                resultList = detectedList
+            }else if(detectedList[0] == 3f){
+                if(70f < detectedList[4] && detectedList[4] < 101f
+                    && 20f < detectedList[3] && detectedList[3] < 200f){
+                    safeSave = true
+                    saveButton.visibility = View.VISIBLE
+                }
+                printAnalysis.setText("Oximeter:" + "\nPul:" + detectedList[3].toString()
+                        + "\nSpo2:" + detectedList[4].toString())
+                byteArray  = stream.toByteArray()
+                resultList = detectedList
+            }else if(detectedList[0] == 4f){
+                if(20 < detectedList[1] && detectedList[1] < 60){
+                    safeSave = true
+                    saveButton.visibility = View.VISIBLE
+                }
+                printAnalysis.setText("Termometer:\n" + detectedList[1].toString() + "\nCº:" )
+                byteArray  = stream.toByteArray()
+                resultList = detectedList
             }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
-                val intent = Intent(this, Class.forName(Utils().lastActivity))
-                intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
-                intent.putExtra(Utils().pictureOutKey, byteArray)
-                intent.putExtra(Utils().timerOutKey, System.currentTimeMillis()-StartTime)
-                finish()
-                startActivity(intent)
+                if(0 < detectedList[1] && detectedList[1] < 201){
+                    safeSave = true
+                    saveButton.visibility = View.VISIBLE
+                }
+                printAnalysis.setText("Weight Balance:\n" + detectedList[1].toString() + "\nKg:" )
+                byteArray  = stream.toByteArray()
+                resultList = detectedList
             }else{
-                assist.visibility = View.GONE
+                saveButton.visibility = View.INVISIBLE
+                cardViewDetection.visibility = View.INVISIBLE
+                assist.text = "Invalid Analysis "
+                assist.visibility = View.VISIBLE
+                safeSave = false
             }
-        }else if(detectedList[0] == 8f){
-            assist.text = "Bring the device closer"
-            assist.visibility = View.VISIBLE
         }else if(detectedList[0] == 9f){
+            saveButton.visibility = View.INVISIBLE
+            cardViewDetection.visibility = View.INVISIBLE
             assist.text = "Wrong Device Selected"
             assist.visibility = View.VISIBLE
-        }
-        else{
+            safeSave = false
+        }else if(detectedList[0] == 8f){
+            saveButton.visibility = View.INVISIBLE
+            cardViewDetection.visibility = View.INVISIBLE
+            assist.text = "Bring the device closer"
+            assist.visibility = View.VISIBLE
+            safeSave = false
+        }else{
+            cardViewDetection.visibility = View.INVISIBLE
+            saveButton.visibility = View.INVISIBLE
             assist.visibility = View.GONE
+            safeSave = false
         }
     }
 
