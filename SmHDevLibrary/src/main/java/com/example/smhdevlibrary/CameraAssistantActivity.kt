@@ -103,8 +103,6 @@ class CameraAssistantActivity : AppCompatActivity() {
                         image.width, image.height, Bitmap.Config.ARGB_8888)
                 }
 
-
-
                 // Convert the image to RGB and place it in our shared buffer
                 converter.yuvToRgb(image.image!!, bitmapBuffer)
 
@@ -183,19 +181,19 @@ class CameraAssistantActivity : AppCompatActivity() {
                 byteArray  = stream.toByteArray()
                 resultList = detectedList
             }else if(detectedList[0] == 4f){
-                if(20 < detectedList[1] && detectedList[1] < 60){
+                if(300 < detectedList[1] && detectedList[1] < 450){
                     safeSave = true
                     saveButton.visibility = View.VISIBLE
                 }
                 printAnalysis.setText("Termometer:\n" + detectedList[1].toString() + "\nCº:" )
                 byteArray  = stream.toByteArray()
                 resultList = detectedList
-            }else if (detectedList[0] == 5f && 0 < detectedList[1] && detectedList[1] < 201){
-                if(0 < detectedList[1] && detectedList[1] < 201){
+            }else if (detectedList[0] == 5f ){
+                if(200 < detectedList[1] && detectedList[1] < 1800){
                     safeSave = true
                     saveButton.visibility = View.VISIBLE
                 }
-                printAnalysis.setText("Weight Balance:\n" + detectedList[1].toString() + "\nKg:" )
+                printAnalysis.setText("Weight Balance:\n" + (detectedList[1].toFloat()/10).toString() + "\nKg:" )
                 byteArray  = stream.toByteArray()
                 resultList = detectedList
             }else{
