@@ -141,7 +141,7 @@ class CameraActivity : AppCompatActivity() {
                 finish()
                 startActivity(intent)
                 runingCam = false
-            }else if (detectedList[0] == 2f && 100f < detectedList[1] && detectedList[1] < 200f
+            }else if (detectedList[0] == 2f && 80f < detectedList[1] && detectedList[1] < 200f
                 && 20f < detectedList[2] && detectedList[2] < 100f && (detectedList[3] == 0f || (20f < detectedList[3] && detectedList[3] < 200f))){
                 val intent = Intent(this, Class.forName(Utils().lastActivity))
                 intent.putExtra(Utils().listOutKey, detectedList.toFloatArray())
